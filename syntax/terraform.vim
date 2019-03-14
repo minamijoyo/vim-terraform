@@ -3357,7 +3357,7 @@ syn keyword terraResourceTypeBI
           \ yandex_vpc_subnet
 """ end resources
 
-syn keyword terraTodo         contained TODO FIXME XXX BUG
+syn keyword terraTodo         contained TODO FIXME XXX BUG TF-UPGRADE-TODO
 syn cluster terraCommentGroup contains=terraTodo
 syn region  terraComment      start="/\*" end="\*/" contains=@terraCommentGroup,@Spell
 syn region  terraComment      start="#" end="$" contains=@terraCommentGroup,@Spell
@@ -3396,7 +3396,7 @@ syn match terraBraces        "[{}\[\]]"
 """ we may also want to pass \\" into a function to escape quotes.
 syn region terraValueString   start=/"/ skip=/\\\+"/ end=/"/ contains=terraStringInterp
 syn region terraStringInterp  matchgroup=terraBrackets start=/\${/ end=/}/ contains=terraValueFunction,terraValueVarSubscript,terraStringInterp contained
-syn region terraHereDocText   start=/<<-\?\z([a-z0-9A-Z]\+\)/ end=/^\s*\z1/ contains=terraStringInterp
+syn region terraHereDocText   start=/<<-\?\z([a-z0-9A-Z]\+\)/ end=/^\s*\z1/ contains=terraStringInterp,terraTemplateInterp
 "" TODO match keywords here, not a-z+
 syn region terraValueFunction matchgroup=terraBrackets start=/[a-z]\+(/ end=/)/ contains=terraValueString,terraValueFunction,terraValueVarSubscript contained
 " User variables or module outputs can be lists or maps, and accessed with
@@ -3407,15 +3407,13 @@ syn region terraValueVarSubscript start=/\(\<var\|\<module\)\.[a-z0-9_-]\+\[/ en
 syn match  terraDynamic     /\<dynamic\>/ nextgroup=terraDynamicName skipwhite
 syn region terraDynamicName start=/"/ end=/"/ nextgroup=terraDynamicBlock skipwhite
 syn keyword terraContent content
-syn keyword terraRepeat for in
+syn keyword terraRepeat for in endfor
 syn keyword terraConditional if
 syn keyword terraPrimitiveType string bool number
 syn keyword terraStructuralType object tuple
 syn keyword terraCollectionType list map set
 syn keyword terraValueNull null
-
-""" Terraform v0.12
-syn keyword terraTodo contained TF-UPGRADE-TODO
+syn region terraTemplateInterp matchgroup=terraBrackets start=/%{/ end=/}/ contains=terraValueString,terraValueFunction,terraValueVarSubscript,terraRepeat
 
 hi def link terraComment           Comment
 hi def link terraTodo              Todo
@@ -3453,5 +3451,6 @@ hi def link terraPrimitiveType     Type
 hi def link terraStructuralType    Type
 hi def link terraCollectionType    Type
 hi def link terraValueNull         Constant
+hi def link terraTemplateInterp    Identifier
 
 let b:current_syntax = "terraform"
